@@ -30,10 +30,23 @@ Next, you’ll add a new file to this repository.
 5. Go back to the **Source** page.
 
 Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+## Usage
+## Register a User
+Send a POST request to http://localhost:3000/user/register with the following JSON payload:
+{
+    "username": "your_username",
+    "email": "your_email@example.com",
+    "password": "your_password"
+}
+
+## Login
+Send a POST request to http://localhost:3000/auth/login with the following JSON payload:
 
 ---
 
 ## Clone a repository
+## Update Profile
+Send a POST request to http://localhost:3000/user/update-profile with the following JSON payload:
 
 Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
 
