@@ -1,12 +1,12 @@
 {
-  "name": "snapapi",
+  "name": "snapxxl-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Pramod K Singh",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -15,5 +15,19 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://pksinghsme@bitbucket.org/rndwork/snapxxl-api.git"
+  },
+  "keywords": [
+    "photo",
+    "print",
+    "album",
+    "cards"
+  ],
+  "bugs": {
+    "url": "https://bitbucket.org/rndwork/snapxxl-api/issues"
+  },
+  "homepage": "https://bitbucket.org/rndwork/snapxxl-api#readme"
 }

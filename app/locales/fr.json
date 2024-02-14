@@ -1,0 +1,39 @@
+{
+    "categories": [
+        {
+            "code": "PHOTO_POSTER",
+            "name": "Impressions sur toile",
+            "description": "Impressions sur toile de haute qualité de vos photos préférées."
+        },
+        {
+            "code": "PHOTO_BOOK",
+            "name": "Livres photo",
+            "description": "Créez de beaux livres photo pour préserver vos souvenirs."
+        },
+        {
+            "code": "CALENDAR",
+            "name": "Calendriers photo",
+            "description": "Calendriers photo personnalisables pour l'année à venir."
+        }
+    ],
+    "products": [
+        {
+            "code": "PRINT_P_04_06",
+            "name": "Impression sur toile Premium",
+            "categoryId": "PHOTO_POSTER",
+            "description": "Impression sur toile époustouflante avec des matériaux de qualité muséale."
+        },
+        {
+            "code": "PHOTO_C_04_06",
+            "name": "Livre photo de luxe",
+            "category_code": "PHOTO_BOOK",
+            "description": "Livre photo luxueux avec reliure à plat."
+        },
+        {
+            "code": "CAL_P_04_06",
+            "name": "Calendrier photo personnalisé",
+            "category_code": "CALENDAR",
+            "description": "Calendrier photo personnalisé avec vos images préférées."
+        }
+    ]
+}

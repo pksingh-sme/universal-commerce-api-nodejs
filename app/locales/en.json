@@ -1,0 +1,39 @@
+{
+    "categories": [
+        {
+            "code": "PHOTO_POSTER",
+            "name": "Poster Prints",
+            "description": "High-quality poster prints of your favorite photos."
+        },
+        {
+            "code": "PHOTO_BOOK",
+            "name": "Photo Books",
+            "description": "Create beautiful photo books to preserve your memories."
+        },
+        {
+            "code": "CALENDAR",
+            "name": "Photo Calendars",
+            "description": "Customizable photo calendars for the upcoming year."
+        }
+    ],
+    "products": [
+        {
+            "code": "PRINT_P_04_06",
+            "name": "Premium Canvas Print",
+            "category_code": "PHOTO_POSTER",
+            "description": "Stunning canvas print with museum-quality materials."
+        },
+        {
+            "code": "PHOTO_C_04_06",
+            "name": "Deluxe Photo Book",
+            "category_code": "PHOTO_BOOK",
+            "description": "Luxurious photo book with lay-flat binding."
+        },
+        {
+            "code": "CAL_P_04_06",
+            "name": "Custom Photo Calendar",
+            "category_code": "CALENDAR",
+            "description": "Personalized photo calendar with your favorite images."
+        }
+    ]
+}
