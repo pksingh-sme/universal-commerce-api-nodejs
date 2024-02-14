@@ -26,8 +26,8 @@ DB_PASSWORD=<your_mysql_password>
 DB_NAME=<your_mysql_database>
 JWT_SECRET=<your_jwt_secret>
 
-Usage
-Register a User
+## Usage
+## Register a User
 Send a POST request to http://localhost:3000/user/register with the following JSON payload:
 {
     "username": "your_username",
@@ -35,7 +35,7 @@ Send a POST request to http://localhost:3000/user/register with the following JS
     "password": "your_password"
 }
 
-Login
+## Login
 Send a POST request to http://localhost:3000/auth/login with the following JSON payload:
 
 {
@@ -43,7 +43,7 @@ Send a POST request to http://localhost:3000/auth/login with the following JSON 
     "password": "your_password"
 }
 
-Update Profile
+## Update Profile
 Send a POST request to http://localhost:3000/user/update-profile with the following JSON payload:
 
 {
