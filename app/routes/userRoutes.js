@@ -1,3 +1,11 @@
+/*
+ * Filename: userRoutes.js
+ * Author: Pramod K Singh
+ * Date: February 2024
+ * Description: Routes for managing user profiles
+ * Version: 1.0
+ */
+
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');

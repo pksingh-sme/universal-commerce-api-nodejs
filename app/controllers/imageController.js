@@ -1,3 +1,13 @@
+/*
+ * Controller Name: ImageController
+ * Filename: imageController.js
+ * Author: Pramod K Singh
+ * Date: Fabruary 2024
+ * Description: Controller for managing user's images to upload on S3 and save in database.
+ * Version: 1.0
+ * Copyright: ©2024 Pramod K Singh. All rights reserved.
+ */
+
 const dbService = require('../services/dbService');
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const fs = require("fs");
@@ -10,6 +20,12 @@ const s3Client = new S3Client({
   },
 });
 
+/**
+ * Uploads an image file to an AWS S3 bucket and stores its metadata in a database.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<void>} A Promise representing the asynchronous operation.
+ */
 async function uploadImage(req, res) {
     try {
 
@@ -47,7 +63,7 @@ async function uploadImage(req, res) {
             console.log('Image uploaded successfully:', data);
 
             // Insert image metadata into the database
-            const query = 'INSERT INTO user_images (user_id, file_name, file_size, file_type, url) VALUES (?, ?, ?, ?, ?)';
+            const query = 'INSERT INTO UserImages (user_id, file_name, file_size, file_type, url) VALUES (?, ?, ?, ?, ?)';
             const values = [userId, fileName, fileSize, fileType, imageUrl];
 
             try {

@@ -1,3 +1,10 @@
+/*
+ * Filename: authService.js
+ * Author: Pramod K Singh
+ * Date: February 2024
+ * Version: 1.0
+ */
+
 const jwt = require('jsonwebtoken');
 const config = require('../../config/config');
 

@@ -2,12 +2,18 @@ const bcrypt = require('bcrypt');
 const authService = require('../services/authService');
 const dbService = require('../services/dbService');
 
+/**
+ * Handles user login.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<void>} This function does not return anything directly, but sends a response.
+ */
 async function login(req, res) {
     const { email, password } = req.body;
 
     try {
         // Check if the user exists in the database
-        const user = await dbService.query('SELECT * FROM users WHERE email = ?', [email]);
+        const user = await dbService.query('SELECT * FROM Users WHERE email = ?', [email]);
         if (!user.length) {
             return res.status(404).json({ message: 'User not found' });
         }
