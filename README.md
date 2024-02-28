@@ -1,58 +1,62 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+## Project Brief Description:
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+**Project Name:** Universal Commerce Platform API
 
----
+**Author:** Pramod K Singh
 
-## Edit a file
+**Version:** 1.0
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
-
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+**Overview:**
+The Universal Commerce Platform API is a comprehensive, scalable, and secure backend solution designed to facilitate a wide range of e-commerce operations. This RESTful API serves as the backbone for e-commerce applications, offering robust functionalities including user authentication, product management, cart operations, order processing, and address management. Built with modern technologies and best practices, it aims to provide developers and businesses with a solid foundation to build upon, ensuring an efficient and seamless e-commerce experience for end-users.
 
 ---
 
-## Create a file
 
-Next, you’ll add a new file to this repository.
+## Features:
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+**User Authentication:** Secure login and registration system, including profile management and authentication token generation for protected routes.
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
-## Usage
-## Register a User
-Send a POST request to http://localhost:3000/user/register with the following JSON payload:
-{
-    "username": "your_username",
-    "email": "your_email@example.com",
-    "password": "your_password"
-}
+**Product Management:** Comprehensive project management capabilities, including creation, modification, listing, and deletion of products.
 
-## Login
-Send a POST request to http://localhost:3000/auth/login with the following JSON payload:
+**Cart Management:** Functionalities to add, update, and remove items from a user's cart, facilitating a smooth shopping experience.
+
+**Order Processing:** Order creation and management system, allowing users to place orders and track their status, alongside updating payment and order status.
+
+**Address Management:** Users can manage multiple shipping and billing addresses, enabling flexibility and convenience in order processing.
+
+**Content Delivery:** A content management system to handle and deliver various contents in multiple languages, enhancing user engagement and accessibility.
+
+**Image Upload:** Support for image uploads, providing a seamless integration with S3 for storing and retrieving product images.
 
 ---
 
-## Clone a repository
-## Update Profile
-Send a POST request to http://localhost:3000/user/update-profile with the following JSON payload:
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+## Technologies:
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+**Node.js:** For building fast and scalable server-side applications.
+
+**Express:** A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
+
+**MySQL:** As the relational database management system to store and manage application data efficiently.
+
+**AWS S3:** For secure and scalable object storage, used primarily for storing images and static files.
+
+**dotenv:** To manage environment variables, ensuring security and configurability.
+
+**Security:**
+Implements industry-standard security practices including JWT for authentication, bcrypt for password hashing, and secure handling of sensitive information to ensure data integrity and privacy.
+
+**Scalability:**
+Designed with scalability in mind, allowing for easy expansion and integration with other services and APIs as the business grows.
+
+**Author Note:**
+This API represents a foundational step towards creating a unified platform that supports the diverse needs of e-commerce businesses. It emphasizes security, efficiency, and user experience, aiming to provide a comprehensive toolset for developers to build upon.
+
+---
+
+
+
+Please don't hesitate to reach out via email at **pksingh.sme@gmail.com** if you need help with the setup.
+
