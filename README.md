@@ -55,7 +55,9 @@ Designed with scalability in mind, allowing for easy expansion and integration w
 This API represents a foundational step towards creating a unified platform that supports the diverse needs of e-commerce businesses. It emphasizes security, efficiency, and user experience, aiming to provide a comprehensive toolset for developers to build upon.
 
 ---
-
+**Postman Collection:**
+Use below document to test APIs at your end and provide feedback to improve:
+https://documenter.getpostman.com/view/776718/2sA2xcbFWA
 
 
 Please don't hesitate to reach out via email at **pksingh.sme@gmail.com** if you need help with the setup.
