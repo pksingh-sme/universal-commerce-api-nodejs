@@ -55,7 +55,8 @@ Designed with scalability in mind, allowing for easy expansion and integration w
 This API represents a foundational step towards creating a unified platform that supports the diverse needs of e-commerce businesses. It emphasizes security, efficiency, and user experience, aiming to provide a comprehensive toolset for developers to build upon.
 
 ---
-![image](https://github.com/pksingh-sme/universal-commerce-api-nodejs/assets/118387796/e277e81f-297e-45e3-a9d5-020561bfd28b)
+
+![image](https://github.com/pksingh-sme/universal-commerce-api-nodejs/assets/118387796/6ebdc3a7-c9f7-4dbc-9e2f-c9e213c69657)
 
 
 
