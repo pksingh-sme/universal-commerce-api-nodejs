@@ -1,74 +1,39 @@
 {
-  "products": [
-    {
-      "id": 1,
-      "name": "Bouteille d'eau écologique",
-      "description": "Une bouteille d'eau durable fabriquée à partir de matériaux recyclés.",
-      "price": "15.99",
-      "category": "Maison et Cuisine"
-    },
-    {
-      "id": 2,
-      "name": "Écouteurs Bluetooth sans fil",
-      "description": "Qualité sonore élevée avec fonction de suppression du bruit.",
-      "price": "89.99",
-      "category": "Électronique"
-    },
-    {
-      "id": 3,
-      "name": "T-shirt en coton biologique",
-      "description": "T-shirt doux et confortable fabriqué à 100 % en coton biologique.",
-      "price": "29.99",
-      "category": "Vêtements"
-    },
-    {
-      "id": 4,
-      "name": "Caméra de sécurité domestique intelligente",
-      "description": "Gardez votre maison en sécurité avec cette caméra de sécurité intelligente, facile à installer.",
-      "price": "120.50",
-      "category": "Sécurité à domicile"
-    },
-    {
-      "id": 5,
-      "name": "Ensemble de couteaux de cuisine professionnels",
-      "description": "Un ensemble de couteaux de qualité professionnelle pour une découpe précise.",
-      "price": "250.00",
-      "category": "Ustensiles de cuisine"
-    },
-    {
-      "id": 6,
-      "name": "Chargeur solaire portable",
-      "description": "Chargez vos appareils en déplacement avec ce chargeur solaire écologique.",
-      "price": "59.99",
-      "category": "Gadgets"
-    },
-    {
-      "id": 7,
-      "name": "Chaise de bureau ergonomique",
-      "description": "Conçue pour le confort, cette chaise soutient la posture pendant de longues heures de travail.",
-      "price": "199.99",
-      "category": "Mobilier de bureau"
-    },
-    {
-      "id": 8,
-      "name": "Montre intelligente Bluetooth",
-      "description": "Suivez votre forme physique et restez connecté avec cette élégante montre intelligente.",
-      "price": "129.99",
-      "category": "Vêtements connectés"
-    },
-    {
-      "id": 9,
-      "name": "Ensemble de soins de la peau aux herbes",
-      "description": "Nourrissez votre peau avec nos produits de soins de la peau aux herbes entièrement naturels.",
-      "price": "45.99",
-      "category": "Beauté et soins personnels"
-    },
-    {
-      "id": 10,
-      "name": "Tente de camping compacte",
-      "description": "Légère et facile à installer, cette tente est parfaite pour votre prochaine aventure en plein air.",
-      "price": "99.99",
-      "category": "Extérieur"
-    }
-  ]
+    "categories": [
+        {
+            "code": "PHOTO_POSTER",
+            "name": "Impressions sur toile",
+            "description": "Impressions sur toile de haute qualité de vos photos préférées."
+        },
+        {
+            "code": "PHOTO_BOOK",
+            "name": "Livres photo",
+            "description": "Créez de beaux livres photo pour préserver vos souvenirs."
+        },
+        {
+            "code": "CALENDAR",
+            "name": "Calendriers photo",
+            "description": "Calendriers photo personnalisables pour l'année à venir."
+        }
+    ],
+    "products": [
+        {
+            "code": "PRINT_P_04_06",
+            "name": "Impression sur toile Premium",
+            "categoryId": "PHOTO_POSTER",
+            "description": "Impression sur toile époustouflante avec des matériaux de qualité muséale."
+        },
+        {
+            "code": "PHOTO_C_04_06",
+            "name": "Livre photo de luxe",
+            "category_code": "PHOTO_BOOK",
+            "description": "Livre photo luxueux avec reliure à plat."
+        },
+        {
+            "code": "CAL_P_04_06",
+            "name": "Calendrier photo personnalisé",
+            "category_code": "CALENDAR",
+            "description": "Calendrier photo personnalisé avec vos images préférées."
+        }
+    ]
 }

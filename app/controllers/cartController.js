@@ -3,7 +3,7 @@
  * Filename: cartController.js
  * Author: Pramod K Singh
  * Date: Fabruary 2024
- * Description: Controller for managing user's shipping and billing addresses.
+ * Description: Controller for managing user's cart.
  * Version: 1.0
  * Copyright: ©2024 Pramod K Singh. All rights reserved.
  */

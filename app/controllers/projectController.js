@@ -20,13 +20,21 @@ const Project = require('../models/Project');
  * @description Create a new project.
  */
 exports.createProject = async (req, res) => {
-    const { userId, name, description, imageUrl } = req.body;
-    const project = new Project(userId, name, description, imageUrl);
-    const saved = await project.save();
-    if (saved) {
-        res.status(201).json({ message: 'Project created successfully' });
-    } else {
-        res.status(500).json({ message: 'Failed to create project' });
+    try {
+        const { projectId, userId, name, description, imageUrl } = req.body;
+        const existingProject = await Project.getProjectById(projectId);
+
+        if (!existingProject) {
+            const project = new Project(projectId, userId, name, description, imageUrl);
+            await project.save();
+            res.status(201).json({ message: 'Project created successfully' });
+        } else {
+            await Project.updateProject(projectId, userId, name, description, imageUrl);
+            res.status(200).json({ message: 'Project updated successfully' });
+        }
+    } catch (error) {
+        console.error('Error creating/updating project:', error);
+        res.status(500).json({ message: 'Failed to create/update project' });
     }
 };
 
@@ -40,9 +48,14 @@ exports.createProject = async (req, res) => {
  * @description Retrieve all projects of a user.
  */
 exports.getProjectsByUserId = async (req, res) => {
-    const { userId } = req.params;
-    const projects = await Project.getAllProjectsByUserId(userId);
-    res.status(200).json(projects);
+    try{
+        const { userId } = req.params;
+        const projects = await Project.getAllProjectsByUserId(userId);
+        res.status(200).json(projects);
+    } catch (error) {
+        console.error('Error in fetching project:', error);
+        res.status(500).json({ message: 'Failed to fetch projects' });
+    }
 };
 
 /**

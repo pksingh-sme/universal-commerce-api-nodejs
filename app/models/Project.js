@@ -22,7 +22,8 @@ class Project {
      * @param {string} imageUrl - The URL of the image associated with the project.
      * @param {string} [status='Pending'] - The status of the project (default: 'Pending').
      */    
-    constructor(userId, name, description, imageUrl, status='Pending') {
+    constructor(projectId, userId, name, description, imageUrl, status='Pending') {
+        this.projectId = projectId;
         this.userId = userId;
         this.name = name;
         this.description = description;
@@ -36,8 +37,8 @@ class Project {
      */    
     async save() {
         try {
-            const query = 'INSERT INTO Projects (user_id, name, description, image_url) VALUES (?, ?, ?, ?)';
-            const values = [this.userId, this.name, this.description, this.imageUrl];
+            const query = 'INSERT INTO Projects (project_id, user_id, name, description, image_url) VALUES (?, ?, ?, ?, ?)';
+            const values = [this.projectId, this.userId, this.name, this.description, this.imageUrl];
             await dbService.query(query, values);
             return true;
         } catch (error) {
@@ -87,10 +88,10 @@ class Project {
      * @param {string} imageUrl - The new URL of the image associated with the project.
      * @returns {boolean} - True if the project is successfully updated, false otherwise.
      */    
-    static async updateProject(projectId, name, description, imageUrl) {
+    static async updateProject(projectId, userId, name, description, imageUrl) {
         try {
-            const query = 'UPDATE Projects SET name = ?, description = ?, image_url = ? WHERE project_id = ?';
-            const values = [name, description, imageUrl, projectId];
+            const query = 'UPDATE Projects SET name = ?, description = ?, image_url = ? WHERE project_id = ? AND user_id = ?';
+            const values = [name, description, imageUrl, projectId, userId];
             await dbService.query(query, values);
             return true;
         } catch (error) {

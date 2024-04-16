@@ -13,4 +13,7 @@ const authController = require('../controllers/authController');
 // Route to handle user login
 router.post('/login', authController.login);
 
+// Refresh token route
+router.post('/refresh', authController.refreshToken);
+
 module.exports = router;

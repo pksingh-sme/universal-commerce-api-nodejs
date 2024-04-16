@@ -23,6 +23,8 @@ Thumbs.db
 .env.test.local
 .env.production.local
 
+config/
+
 
 # Node artifact files
 node_modules/

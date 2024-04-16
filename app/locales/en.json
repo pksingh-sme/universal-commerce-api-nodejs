@@ -1,74 +1,39 @@
 {
-  "products": [
-    {
-      "id": 1,
-      "name": "Eco-Friendly Water Bottle",
-      "description": "A sustainable water bottle made from recycled materials.",
-      "price": "15.99",
-      "category": "Home & Kitchen"
-    },
-    {
-      "id": 2,
-      "name": "Wireless Bluetooth Headphones",
-      "description": "High-quality sound with noise cancellation feature.",
-      "price": "89.99",
-      "category": "Electronics"
-    },
-    {
-      "id": 3,
-      "name": "Organic Cotton T-Shirt",
-      "description": "Soft and comfortable t-shirt made from 100% organic cotton.",
-      "price": "29.99",
-      "category": "Clothing"
-    },
-    {
-      "id": 4,
-      "name": "Smart Home Security Camera",
-      "description": "Keep your home safe with this smart, easy-to-install security camera.",
-      "price": "120.50",
-      "category": "Home Security"
-    },
-    {
-      "id": 5,
-      "name": "Professional Kitchen Knife Set",
-      "description": "A set of professional-grade knives for precision cutting.",
-      "price": "250.00",
-      "category": "Kitchenware"
-    },
-    {
-      "id": 6,
-      "name": "Portable Solar Charger",
-      "description": "Charge your devices on the go with this eco-friendly solar charger.",
-      "price": "59.99",
-      "category": "Gadgets"
-    },
-    {
-      "id": 7,
-      "name": "Ergonomic Office Chair",
-      "description": "Designed for comfort, this chair supports posture during long working hours.",
-      "price": "199.99",
-      "category": "Office Furniture"
-    },
-    {
-      "id": 8,
-      "name": "Bluetooth Smart Watch",
-      "description": "Track your fitness and stay connected with this sleek smartwatch.",
-      "price": "129.99",
-      "category": "Wearables"
-    },
-    {
-      "id": 9,
-      "name": "Herbal Skincare Set",
-      "description": "Nourish your skin with our all-natural herbal skincare products.",
-      "price": "45.99",
-      "category": "Beauty & Personal Care"
-    },
-    {
-      "id": 10,
-      "name": "Compact Camping Tent",
-      "description": "Lightweight and easy to set up, this tent is perfect for your next outdoor adventure.",
-      "price": "99.99",
-      "category": "Outdoor"
-    }
-  ]
+    "categories": [
+        {
+            "code": "PHOTO_POSTER",
+            "name": "Poster Prints",
+            "description": "High-quality poster prints of your favorite photos."
+        },
+        {
+            "code": "PHOTO_BOOK",
+            "name": "Photo Books",
+            "description": "Create beautiful photo books to preserve your memories."
+        },
+        {
+            "code": "CALENDAR",
+            "name": "Photo Calendars",
+            "description": "Customizable photo calendars for the upcoming year."
+        }
+    ],
+    "products": [
+        {
+            "code": "PRINT_P_04_06",
+            "name": "Premium Canvas Print",
+            "category_code": "PHOTO_POSTER",
+            "description": "Stunning canvas print with museum-quality materials."
+        },
+        {
+            "code": "PHOTO_C_04_06",
+            "name": "Deluxe Photo Book",
+            "category_code": "PHOTO_BOOK",
+            "description": "Luxurious photo book with lay-flat binding."
+        },
+        {
+            "code": "CAL_P_04_06",
+            "name": "Custom Photo Calendar",
+            "category_code": "CALENDAR",
+            "description": "Personalized photo calendar with your favorite images."
+        }
+    ]
 }
