@@ -23,9 +23,9 @@ async function addAddress(req, res) {
   try {
     const { userId, type, first_name, last_name, street_address1, city, state, zip, country, phone, email, company_name, street_address2 } = req.body;
     const newAddress = new Address(userId, type, first_name, last_name, street_address1, city, state, zip, country, phone, email, company_name, street_address2);
-    const saved = await newAddress.save();
-    if (saved) {
-        res.status(201).json({ message: 'Address added successfully' });
+    const addressId = await newAddress.save();
+    if (addressId > 0 ) {
+        res.status(201).json({ address_id:addressId, message: 'Address added successfully' });
     } else {
         res.status(500).json({ message: 'Failed to add address' });
     }

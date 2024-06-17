@@ -19,20 +19,25 @@ router.post("/image", uploadController.uploadImage); // Use the uploadImage func
 router.post("/json", uploadController.uploadJSON); // Use the uploadJSON function from the uploadController
 
 
-
-
 // Route to handle upload JSON files on S3 and save album in database
+router.get("/read/:albumId", uploadController.readJSON); // Use the uploadJSON function from the uploadController
 
-// Multer configuration
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, 'uploads/') // Destination folder for uploaded files
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.originalname) // Use the original filename for uploaded files
-    }
-  });
-  const upload = multer({ storage: storage });
+
+// Route to handle upload file on S3 and save album in database
+// Set up multer for handling file uploads
+
+
+// // Multer configuration
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, 'uploads/') // Destination folder for uploaded files
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, file.originalname) // Use the original filename for uploaded files
+//     }
+//   });
+// const upload = multer({ storage: storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/file", upload.single('file'), uploadController.uploadFile); // Use the uploadFile function from the uploadController
 

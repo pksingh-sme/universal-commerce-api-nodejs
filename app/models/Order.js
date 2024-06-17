@@ -49,7 +49,7 @@ class Order {
                 const detailValues = [orderId, detail.project_id, detail.quantity, detail.unit_price, detail.total_price];
                 await dbService.query(detailQuery, detailValues);
             }
-            return true;
+            return orderId;
         } catch (error) {
             console.error('Error creating order:', error);
             return false;

@@ -69,9 +69,8 @@ exports.updateCartItem = async (req, res) => {
  * @returns {Promise<void>} This function does not return anything directly, but sends a response.
  */
 exports.deleteCartItem = async (req, res) => {
-    const { userId, projectId } = req.params;
-    const cartItem = new Cart(userId, projectId);
-    const deleted = await cartItem.deleteCartItem();
+    const { cartId } = req.params;
+    const deleted = await Cart.deleteCartItem(cartId);
     if (deleted) {
         res.status(200).json({ message: 'Cart item deleted successfully' });
     } else {

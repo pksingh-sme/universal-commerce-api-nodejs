@@ -63,11 +63,11 @@ class Cart {
      * Deletes a project from the user's cart.
      * @returns {boolean} - True if the cart item is successfully deleted, false otherwise.
      */
-    async deleteCartItem() {
+    static async deleteCartItem(cartId) {
         try {
-            const query = 'DELETE FROM Cart WHERE user_id = ? AND project_id = ?';
-            const values = [this.userId, this.projectId];
-            await dbService.query(query, values);
+            const query = 'DELETE FROM Cart WHERE cart_id = ?';
+            
+            await dbService.query(query, [cartId]);
             return true;
         } catch (error) {
             console.error('Error deleting cart item:', error);

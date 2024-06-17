@@ -10,6 +10,10 @@
 
 const Order = require('../models/Order');
 
+const emailService = require('../services/emailService');
+const path = require('path');
+
+
 /**
  * Creates a new order.
  * @param {Object} req - The HTTP request object.
@@ -22,8 +26,19 @@ const Order = require('../models/Order');
 exports.createOrder = async (req, res) => {
     const { userId, totalAmount, status, paymentStatus, shippingAddressId, billingAddressId, orderDetails } = req.body;
     const order = new Order(userId, totalAmount, status, paymentStatus, shippingAddressId, billingAddressId, orderDetails);
-    const created = await order.createOrder();
-    if (created) {
+    const orderId = await order.createOrder();
+    if (orderId > 0) {
+        const recipientEmail = 'pksingh.sme@gmail.com, rajukhinda@gmail.com'; // Replace with the recipient's email address
+        const subject = 'Order Confirmation'; // Replace with the email subject
+        const templatePath = path.join(__dirname, '../templates/emails/orderConfirmation.html'); // Path to the email template
+        const data = {
+            firstName: 'Pramod', // Replace with the recipient's first name
+            orderNumber: orderId, // Replace with the actual order number
+            orderDetails: orderDetails
+        };
+
+        emailService.sendEmail(recipientEmail, subject, templatePath, data);        
+        
         res.status(201).json({ message: 'Order created successfully' });
     } else {
         res.status(500).json({ message: 'Failed to create order' });
@@ -60,6 +75,19 @@ exports.updateOrderStatus = async (req, res) => {
     const order = new Order();
     const updated = await order.updateOrderStatus(userId, orderId, status);
     if (updated) {
+
+        //        const recipientEmail = 'rajukhinda@gmail.com'; // Replace with the recipient's email address
+        const recipientEmail = 'pksingh.sme@gmail.com, rajukhinda@gmail.com'; // Replace with the recipient's email address
+        const subject = `Update: Your Order #${orderId} Status`; // Replace with the email subject
+        const templatePath = path.join(__dirname, '../templates/emails/orderStatus.html'); // Path to the email template
+        const data = {
+            firstName: 'Pramod', // Replace with the recipient's first name
+            orderNumber: orderId, // Replace with the actual order number
+            orderStatus: status
+        };
+
+        emailService.sendEmail(recipientEmail, subject, templatePath, data);        
+
         res.status(200).json({ message: 'Order status updated successfully' });
     } else {
         res.status(500).json({ message: 'Failed to update order status' });

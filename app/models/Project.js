@@ -71,9 +71,13 @@ class Project {
      */
     static async getProjectById(projectId) {
         try {
-            const query = 'SELECT * FROM Projects WHERE project_id = ?';
-            const [rows] = await dbService.query(query, [projectId]);
-            return rows;
+            const projectIds = projectId.split(',');
+
+            // Generate placeholders for SQL query
+            const placeholders = projectIds.map(() => '?').join(',');
+            const query = `SELECT * FROM Projects WHERE project_id IN (${placeholders})`;
+            const result = await dbService.query(query, projectIds);
+            return result;
         } catch (error) {
             console.error('Error fetching projects:', error);
             return [];

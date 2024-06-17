@@ -7,9 +7,13 @@
  * Version: 1.0
  * Copyright: ©2024 Pramod K Singh. All rights reserved.
  */
-
+const crypto = require('crypto');
 const dbService = require('../services/dbService');
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { encrypt, decrypt,encryptiotnKey } = require('../services/encryption'); 
+
+const { S3Client, PutObjectCommand, GetObjectCommand  } = require("@aws-sdk/client-s3");
+//const { Readable } = require('stream');
+
 const fs = require("fs");
 const sharp = require('sharp');
 
@@ -30,7 +34,7 @@ const s3Client = new S3Client({
 async function uploadImage(req, res) {
     try {
 
-        const { userId, metaData, file } = req.body;
+        const { userId, metaData, fileName, file } = req.body;
         
         //Check if request body and file property exist
         if (!req.body || !file) {
@@ -42,7 +46,7 @@ async function uploadImage(req, res) {
         const buffer = Buffer.from(base64Data, 'base64');
         
         // Specify the key (file name) under which the file will be stored in S3
-        const fileName = `${Date.now()}.jpg`;
+        //const fileName = `${Date.now()}.jpg`;
         const fileSize = Buffer.byteLength(buffer);
         const fileType = `image/jpeg`;
         const imageUrl = `public/users/photos/${userId}/${fileName}`;
@@ -147,15 +151,28 @@ async function uploadJSON(req, res) {
 
       // Convert JSON to string
       const jsonData = JSON.stringify(json);
-      
+    //   const key = crypto.randomBytes(32); // 256-bit key
+    //   const iv = crypto.randomBytes(16);  // 128-bit IV
+      const key = encryptiotnKey(albumId); // 256-bit key
+      const iv = encryptiotnKey(albumId, 16);  // 128-bit IV
+
+      const encryptionDataString = JSON.stringify({
+        key: key.toString('hex'),
+        iv: iv.toString('hex')
+      });
+
+      const encryptedText = encrypt(jsonData, key, iv);
       // Specify the key (file name) under which the file will be stored in S3
       const fileName = `public/users/album/${albumId}_data.json`;
 
       const params = {
           Bucket: process.env.S3_BUCKET_NAME,
           Key: fileName,
-          Body: jsonData,
-          ContentType: 'application/json' // Specify the content type of the file
+          Body: encryptedText,
+          ContentType: 'application/json', // Specify the content type of the file
+          Metadata: {
+            encryption_data: encryptionDataString
+          }
       };
 
       // Upload the JSON file to S3
@@ -175,49 +192,6 @@ async function uploadJSON(req, res) {
   }
 }
 
-/**
- * Uploads a file to an AWS S3 bucket.
- * @param {Object} req - The HTTP request object.
- * @param {Object} res - The HTTP response object.
- * @returns {void}
- */
-async function uploadFiles(req, res) {
-  try {
-    const { userId, file } = req.body;
-
-    // Check if request body and file data property exist
-    if (!req.body || !file) {
-        return res.status(400).send("File data is missing");
-    }
-
-    // Convert file data from base64 string to buffer
-    const fileData = Buffer.from(file, 'base64');
-
-    // Specify the key (file name) under which the file will be stored in S3
-    const fileName = `public/users/files/${userId}/${Date.now()}_file`;
-
-    const params = {
-        Bucket: process.env.S3_BUCKET_NAME,
-        Key: fileName,
-        Body: fileData
-    };
-
-    // Upload the file to S3
-    const command = new PutObjectCommand(params);
-    const data = await s3Client.send(command);
-
-    if (!data) {
-        console.error('Error uploading file:', fileName);
-        res.status(500).json({ message: 'Error uploading file' });
-    } else {
-        console.log('File uploaded successfully:', data);
-        res.status(200).json({ fileName: fileName });
-      }
-  } catch (error) {
-      console.error("Error uploading JSON file to S3:", error);
-      res.status(500).send("Error uploading JSON file");
-  }
-}
 
 /**
  * Uploads a file to an AWS S3 bucket using binary data.
@@ -227,48 +201,161 @@ async function uploadFiles(req, res) {
  */
 const uploadFile = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId, type, metaData } = req.body;
       if (!req.file) {
           return res.status(400).json({ message: 'No file uploaded' });
       }
 
       const { originalname, mimetype, buffer } = req.file;
-
+      
+      const fileName = generateFileName(originalname);
       // Generate a unique filename
-      const fileName = `public/users/files//${userId}/${uuidv4()}-${originalname}`;
+      let imageUrl = `public/users/files/${userId}/${fileName}`;
+      let thumbnail200Url = "";
+      let thumbnail500Url = "";
 
-      // Specify the S3 upload parameters
-      const params = {
-          Bucket: process.env.S3_BUCKET_NAME,
-          Key: fileName,
-          Body: buffer,
-          ContentType: mimetype,
-          ACL: 'public-read' // Optionally, set the access control level
-      };
+      let uploadPromises= [];
+ 
+      if(type == "PHOTO"){
+        imageUrl = `public/users/photos/${userId}/${fileName}`;
+        thumbnail200Url = `public/users/photos/${userId}/200/${fileName}`;
+        thumbnail500Url = `public/users/photos/${userId}/500/${fileName}`;
+        const [thumbnail200, thumbnail500] = await generateThumbnails(buffer)
+ 
+        // Upload both the original image and the thumbnail to S3 simultaneously
+        uploadPromises = [
+            uploadToS3(imageUrl, buffer, mimetype),
+            uploadToS3(thumbnail200Url, thumbnail200, mimetype),
+            uploadToS3(thumbnail500Url, thumbnail500, mimetype)
+        ];        
+      }else if(type == "ALBUM"){
+        imageUrl = `public/users/album/${userId}/${generateFileName(originalname)}`;
+        uploadPromises = [
+            uploadToS3(imageUrl, buffer, mimetype)
+        ]
+      }else{
+        uploadPromises = [
+            uploadToS3(imageUrl, buffer, mimetype)
+        ]
+      }
 
-      // Upload the file to S3
-      const command = new PutObjectCommand(params);
-      await s3Client.send(command);
+    //   // Specify the S3 upload parameters
+    //   const params = {
+    //       Bucket: process.env.S3_BUCKET_NAME,
+    //       Key: fileName,
+    //       Body: buffer,
+    //       ContentType: mimetype,
+    //      // ACL: 'public-read' // Optionally, set the access control level
+    //   };
+
+    //   // Upload the file to S3
+    //   const command = new PutObjectCommand(params);
+    //   await s3Client.send(command);
+
+
+    // Generate thumbnail
+
+ //   const [thumbnail200, thumbnail500] = await generateThumbnails(buffer)
+ 
+    // Upload both the original image and the thumbnail to S3 simultaneously
+    // const uploadPromises = [
+    //     uploadToS3(imageUrl, buffer, mimetype),
+    //     uploadToS3(thumbnail200Url, thumbnail200, mimetype),
+    //     uploadToS3(thumbnail500Url, thumbnail500, mimetype)
+    // ];
+
+    // Wait for both uploads to complete
+    await Promise.all(uploadPromises);
 
       // Construct the public URL for the uploaded file
-      const fileUrl = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
+      const fileUrl = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${imageUrl}`;
 
-      res.status(200).json({
-          message: 'File uploaded successfully',
-          file: {
-              name: originalname,
-              size: buffer.length,
-              url: fileUrl
-          }
-      });
+
+      
+        // Insert image metadata into the database
+        const query = 'INSERT INTO UserImages (user_id, file_name, file_size, file_type, url, property) VALUES (?, ?, ?, ?, ?, ?)';
+        const values = [userId, imageUrl,  buffer.length, mimetype, fileUrl, metaData];
+        
+        try {
+            const result = await dbService.query(query, values);
+            
+            console.log('File uploaded successfully:');
+            res.status(200).json({ imageUrl: imageUrl });
+        }catch(error){
+            console.error("Error uploading file:", error);
+            res.status(500).send("Error uploading file");
+        }
+
   } catch (error) {
       console.error('Error uploading file:', error);
       res.status(500).json({ message: 'Error uploading file' });
   }
 };
 
+/**
+ * Reads encrypted JSON content from an AWS S3 bucket, decrypts it, and returns as JSON.
+ * @param {string} bucketName - The name of the S3 bucket.
+ * @param {string} key - The key (filename) of the encrypted JSON file in the bucket.
+ * @param {string} projectId - The project ID used to generate the encryption key.
+ * @returns {Promise<Object>} - A promise resolving to the decrypted JSON object.
+ */
+async function readJSON(req, res) {
+    const { projectId } = req.params;
+
+    const fileName = `public/users/album/${projectId}_data.json`;
+
+    const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: fileName
+    };
+
+    try {
+        // Retrieve the encrypted JSON file from S3
+        const { Body, Metadata } = await s3Client.send(new GetObjectCommand(params));
+
+        // Get encryption data (key and IV) from metadata
+        const encryptionDataString = Metadata.encryption_data;
+        const encryptionData = JSON.parse(encryptionDataString);
+        const key = Buffer.from(encryptionData.key, 'hex');
+        const iv = Buffer.from(encryptionData.iv, 'hex');
+
+        // Read the Body stream into a Buffer
+        const bodyBuffer = await streamToBuffer(Body);
+
+        // Decrypt the encrypted JSON content
+        const encryptedContent = bodyBuffer.toString('utf-8');
+        const decryptedContent = decrypt(encryptedContent, key, iv);
+
+        // Parse decrypted JSON content and return
+        const jsonContent = JSON.parse(decryptedContent);
+        res.status(200).json({ json: jsonContent });
+    } catch (error) {
+        console.error("Error reading and decrypting JSON file from S3:", error);
+        res.status(500).json({ message: 'Error reading and JSON file from S3'});
+    }
+}
+
+// Helper function to convert stream to buffer
+async function streamToBuffer(stream) {
+    return new Promise((resolve, reject) => {
+        const chunks = [];
+        stream.on('data', (chunk) => chunks.push(chunk));
+        stream.on('error', reject);
+        stream.on('end', () => resolve(Buffer.concat(chunks)));
+    });
+}
+
+// Function to generate a random filename
+function generateFileName(originalName) {
+    const timestamp = Date.now();
+    const randomNumber = Math.floor(Math.random() * 1000); // Adjust the range as needed
+    const fileExtension = originalName.split('.').pop();
+    return `${timestamp}-${randomNumber}.${fileExtension}`;
+  }
+
 module.exports = {
   uploadImage, // Export the uploadImage function
   uploadJSON,   // Export the uploadJSON function
-  uploadFile   // Export the uploadFile function
+  uploadFile,   // Export the uploadFile function
+  readJSON  // Export the readJSON function
 };

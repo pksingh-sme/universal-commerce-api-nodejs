@@ -54,8 +54,8 @@ class Address {
         try {
             const query = 'INSERT INTO Addresses (user_id, type, first_name, last_name, company_name, street_address1, street_address2, city, state, zip, country, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             const values = [this.userId, this.type, this.firstName, this.lastName, this.companyName, this.streetAddress1, this.streetAddress2, this.city, this.state, this.zip, this.country, this.phone, this.email];
-            await dbService.query(query, values);
-            return true; // Return true if address is successfully saved
+            const result = await dbService.query(query, values);
+            return result.insertId; // Return true if address is successfully saved
         } catch (error) {
             console.error('Error saving address:', error);
             return false; // Return false if there's an error

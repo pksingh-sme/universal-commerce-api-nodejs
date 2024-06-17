@@ -9,6 +9,7 @@
 const express = require('express');
 const router = express.Router();
 const projectController = require('../controllers/projectController');
+const uploadController = require('../controllers/uploadController');
 const authService = require('../services/authService');
 
 // Route to create a new project
@@ -19,6 +20,9 @@ router.get('/user/:userId', authService.authenticate, projectController.getProje
 
 // Route to get project by project ID
 router.get('/:projectId', authService.authenticate, projectController.getProjectById);
+
+// Route to get project by project ID
+router.get('/json/:projectId', authService.authenticate, uploadController.readJSON);
 
 // Route to update project status
 router.put('/:projectId/status', authService.authenticate, projectController.updateProjectStatus);

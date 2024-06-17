@@ -24,7 +24,7 @@ exports.createProject = async (req, res) => {
         const { projectId, userId, name, description, imageUrl } = req.body;
         const existingProject = await Project.getProjectById(projectId);
 
-        if (!existingProject) {
+        if (!existingProject.length == 1) {
             const project = new Project(projectId, userId, name, description, imageUrl);
             await project.save();
             res.status(201).json({ message: 'Project created successfully' });

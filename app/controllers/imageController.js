@@ -112,6 +112,18 @@ async function uploadToS3(key, buffer, contentType) {
     await s3Client.send(new PutObjectCommand(params));
 }
 
+async function getUserImages (req, res) {
+    const { userId } = req.params;
+    try {
+        const result = await dbService.query('SELECT url, property FROM UserImages WHERE user_id = ? ORDER BY uploaded_at DESC', [userId]);
+        res.status(200).json(result); // Returns the image(s) found           
+    } catch (error) {
+        console.error('Error fetching images:', error);
+        res.status(500).json({ message: 'Failed to fetch images' });
+    }
+};
+
 module.exports = {
     uploadImage, // Export the uploadImage function
+    getUserImages, // Get list of images uploaded by users
 };
