@@ -126,6 +126,23 @@ class Address {
             throw new Error('Failed to delete address');
         }
     }
+
+    static async deleteById(addressId) {
+        try {
+          await dbService.query('DELETE FROM Addresses WHERE address_id = ?', [addressId]);
+        } catch (error) {
+          console.error('Error deleting address:', error);
+      
+          // Pass the error with its code to the controller
+          if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+            const err = new Error('Cannot delete address as it is referenced by another record.');
+            err.code = 'ER_ROW_IS_REFERENCED_2';
+            throw err;
+          }
+      
+          throw new Error('Failed to delete address');
+        }
+    }
 }
 
 module.exports = Address;

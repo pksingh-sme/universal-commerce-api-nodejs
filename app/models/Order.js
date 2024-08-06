@@ -13,14 +13,15 @@
 const dbService = require('../services/dbService');
 
 class Order {
-    constructor(userId, totalAmount, status, paymentStatus, shippingAddressId, billingAddressId, orderDetails) {
+    constructor(userId, totalAmount, status, paymentStatus, shippingAddressId, billingAddressId, orderDetails, cartData) {
         this.userId = userId;
         this.totalAmount = totalAmount;
         this.status = status;
-        this.paymentStatus = paymentStatus;
+        this.paymentStatus = paymentStatus; 
         this.shippingAddressId = shippingAddressId;
         this.billingAddressId = billingAddressId;
         this.orderDetails = orderDetails;
+        this.cartData = cartData;
     }
 
     /**
@@ -32,14 +33,15 @@ class Order {
  * @param   {number} shippingAddressId - ID of the shipping address
  * @param   {number} billingAddressId - ID of the billing address
  * @param   {Array}  orderDetails - Array of order details
+ * @param   {string}  cartData - JSON string
  * @returns {boolean} True if the order is created successfully, false otherwise
  */
     async createOrder() {
         try {
             // Insert order
             
-            const orderQuery = 'INSERT INTO Orders (user_id, total_amount, status, payment_status, shipping_address_id, billing_address_id) VALUES (?, ?, ?, ?, ?, ?)';
-            const orderValues = [this.userId, this.totalAmount, this.status, this.paymentStatus, this.shippingAddressId, this.billingAddressId];
+            const orderQuery = 'INSERT INTO Orders (user_id, total_amount, status, payment_status, shipping_address_id, billing_address_id, cart_data) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const orderValues = [this.userId, this.totalAmount, this.status, this.paymentStatus, this.shippingAddressId, this.billingAddressId, this.cartData];
             const orderResult = await dbService.query(orderQuery, orderValues);
             const orderId = orderResult.insertId;
 

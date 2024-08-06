@@ -63,13 +63,13 @@ async function uploadImage(req, res) {
 
         // Insert image metadata into the database
         const query = 'INSERT INTO UserImages (user_id, file_name, file_size, file_type, url, thumbnail_url) VALUES (?, ?, ?, ?, ?, ?)';
-        const values = [userId, fileName, fileSize, fileType, imageUrl, thumbnailUrl];
+        const values = [userId, fileName, fileSize, fileType, imageUrl, thumbnail200Url];
 
         try {
             const result = await dbService.query(query, values);
 
             console.log('Image metadata inserted into database');
-            res.status(200).json({ imageUrl: imageUrl, thumbnailUrl: thumbnailUrl });
+            res.status(200).json({ imageUrl: imageUrl, thumbnailUrl: thumbnail200Url });
         } catch (err) {
             console.error('Error inserting image metadata into database:', err);
             res.status(500).json({ message: 'Error inserting image metadata into database' });

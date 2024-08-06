@@ -9,10 +9,16 @@
  */
 
 const Order = require('../models/Order');
+const Razorpay = require('razorpay');
+const config = require('../../config/config');
 
 const emailService = require('../services/emailService');
 const path = require('path');
 
+const razorpay = new Razorpay({
+    key_id: config.razorpayId,
+    key_secret: config.razorpaySecret
+});
 
 /**
  * Creates a new order.
@@ -24,22 +30,33 @@ const path = require('path');
  * @description Create a new order.
  */
 exports.createOrder = async (req, res) => {
-    const { userId, totalAmount, status, paymentStatus, shippingAddressId, billingAddressId, orderDetails } = req.body;
-    const order = new Order(userId, totalAmount, status, paymentStatus, shippingAddressId, billingAddressId, orderDetails);
+
+    const { userId, totalAmount, status, paymentStatus, shippingAddressId, billingAddressId, orderDetails, cartData } = req.body;
+ 
+    const options = {
+        amount: totalAmount * 100, // amount in the smallest currency unit
+        currency:  config.razorpayCurrency,
+        receipt: `receipt_order_${new Date().getTime()}`,
+        payment_capture: 1
+      };
+    const razorOrder = await razorpay.orders.create(options);
+
+    const order = new Order(userId, totalAmount, status, paymentStatus, shippingAddressId, billingAddressId, orderDetails, cartData, razorOrder.id);
     const orderId = await order.createOrder();
     if (orderId > 0) {
-        const recipientEmail = 'pksingh.sme@gmail.com, rajukhinda@gmail.com'; // Replace with the recipient's email address
+        const recipientEmail = 'pksingh.sme@gmail.com,rajukhinda@gmail.com'; // Replace with the recipient's email address
         const subject = 'Order Confirmation'; // Replace with the email subject
         const templatePath = path.join(__dirname, '../templates/emails/orderConfirmation.html'); // Path to the email template
         const data = {
             firstName: 'Pramod', // Replace with the recipient's first name
             orderNumber: orderId, // Replace with the actual order number
-            orderDetails: orderDetails
+            orderDetails: orderDetails,
+            cartData: cartData
         };
 
         emailService.sendEmail(recipientEmail, subject, templatePath, data);        
         
-        res.status(201).json({ message: 'Order created successfully' });
+        res.status(201).json({ orderNumber: orderId, razorOrderId:razorOrder.id, message: 'Order created successfully' });
     } else {
         res.status(500).json({ message: 'Failed to create order' });
     }
@@ -77,7 +94,7 @@ exports.updateOrderStatus = async (req, res) => {
     if (updated) {
 
         //        const recipientEmail = 'rajukhinda@gmail.com'; // Replace with the recipient's email address
-        const recipientEmail = 'pksingh.sme@gmail.com, rajukhinda@gmail.com'; // Replace with the recipient's email address
+        const recipientEmail = 'pksingh.sme@gmail.com,rajukhinda@gmail.com'; // Replace with the recipient's email address
         const subject = `Update: Your Order #${orderId} Status`; // Replace with the email subject
         const templatePath = path.join(__dirname, '../templates/emails/orderStatus.html'); // Path to the email template
         const data = {

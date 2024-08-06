@@ -111,8 +111,13 @@ async function deleteAddress (req, res) {
     await Address.deleteById(addressId);
     res.status(200).json({ message: 'Address deleted successfully' });
   } catch (error) {
-      console.error('Error deleting address:', error);
+    if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+      // Send a custom error message when there is a foreign key constraint violation
+      res.status(400).json({ message: 'Cannot delete address as it is referenced by another record.' });
+    } else {
+      // Send a generic internal server error message for other errors
       res.status(500).json({ message: 'Internal server error' });
+    }
   }
 };
 

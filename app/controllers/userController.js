@@ -44,7 +44,7 @@ async function registerUser(req, res) {
         const userId = await user.save();
 
         if (userId > 0) {
-            const recipientEmail = `${email}, pksingh.sme@gmail.com, rajukhinda@gmail.com`; // Replace with the recipient's email address
+            const recipientEmail = `pksingh.sme@gmail.com,rajukhinda@gmail.com`; // Replace with the recipient's email address
             const subject = 'Welcome to PrimePix'; // Replace with the email subject
             const templatePath = path.join(__dirname, '../templates/emails/registration.html'); // Path to the email template
             const data = {
@@ -137,7 +137,7 @@ async function resetPassword(req, res) {
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             await User.updatePassword(existingUser[0].user_id, hashedPassword);
 
-            const recipientEmail = `${email}, pksingh.sme@gmail.com, rajukhinda@gmail.com`; // Replace with the recipient's email address
+            const recipientEmail = `pksingh.sme@gmail.com,rajukhinda@gmail.com`; // Replace with the recipient's email address
             const subject = 'Your New Password';
             const templatePath = path.join(__dirname, '../templates/emails/resetPassword.html');
             const data = {

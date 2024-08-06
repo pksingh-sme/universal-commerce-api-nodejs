@@ -194,6 +194,71 @@ async function uploadJSON(req, res) {
 
 
 /**
+ * Uploads template image file to an AWS S3 bucket and stores its metadata in a database.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ * @returns {Promise<void>} A Promise representing the asynchronous operation.
+ */
+async function createTemplate(req, res) {
+  try {
+
+      const { userId, content, type, productCode, groupCode, themeCode, tags, byteArray } = req.body;
+      
+      //Check if request body and byteArray property exist
+      if (!req.body || !byteArray) {
+        return res.status(400).send("Base64-encoded file data is missing");
+      }
+  
+      // Split base64 string and decode
+      const base64Data = byteArray.split(';base64,').pop();
+      const buffer = Buffer.from(base64Data, 'base64');
+      const fileName = `${Date.now()}.jpg`;
+      
+      //const fileSize = Buffer.byteLength(buffer);
+      const fileType = `image/jpeg`;
+      const imageUrl = `public/templates/${userId}/${fileName}`;
+      const thumbnail200Url = `public/templates/${userId}/200/${fileName}`;
+      const thumbnail500Url = `public/templates/${userId}/500/${fileName}`;
+
+      // Generate thumbnail
+      // const thumbnail200Buffer = await generateThumbnail(buffer, 200, 200);
+      // const thumbnail500Buffer = await generateThumbnail(buffer, 500, 500);
+      const [thumbnail200, thumbnail500] = await generateThumbnails(buffer)
+   
+      // Upload both the original image and the thumbnail to S3 simultaneously
+      const uploadPromises = [
+          uploadToS3(imageUrl, buffer, fileType),
+          uploadToS3(thumbnail200Url, thumbnail200, fileType),
+          uploadToS3(thumbnail500Url, thumbnail500, fileType)
+      ];
+
+      // Wait for both uploads to complete
+      await Promise.all(uploadPromises);
+
+      // Insert image metadata into the database
+      const query = 'INSERT INTO Templates (user_id, content, file_type, product_code, group_code, theme_code, url, property) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+      const values = [userId, content, type, productCode, groupCode, themeCode, imageUrl, tags];
+
+      try {
+          const result = await dbService.query(query, values);
+
+          console.log('Image metadata inserted into database');
+          res.status(200).json({ imageUrl: imageUrl });
+      } catch (err) {
+          console.error('Error inserting image metadata into database:', err);
+          res.status(500).json({ message: 'Error inserting image metadata into database' });
+      }
+
+
+  } catch (error) {
+      console.error("Error uploading file to S3:", error);
+      res.status(500).send("Error uploading file");
+  }
+}
+
+
+
+/**
  * Uploads a file to an AWS S3 bucket using binary data.
  * @param {Object} req - The HTTP request object.
  * @param {Object} res - The HTTP response object.
@@ -353,8 +418,10 @@ function generateFileName(originalName) {
     return `${timestamp}-${randomNumber}.${fileExtension}`;
   }
 
+
 module.exports = {
   uploadImage, // Export the uploadImage function
+  createTemplate, // Export the createTemplate function
   uploadJSON,   // Export the uploadJSON function
   uploadFile,   // Export the uploadFile function
   readJSON  // Export the readJSON function

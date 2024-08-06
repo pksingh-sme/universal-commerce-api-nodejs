@@ -11,14 +11,24 @@ function inlineCss(html, cssFilePath) {
     return juice.inlineContent(html, css);
 }
 
-// Create a transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Use your email service provider
+    host: 'email-smtp.ap-south-1.amazonaws.com', // Replace with the AWS SES SMTP endpoint for your region
+    port: 465, // Use port 465 for secure connection
+    secure: true, // Use true for 465, false for other ports
     auth: {
-        user: config.emailUser, // Replace with your email address
-        pass: config.emailPassword // Replace with your email password or app password
+        user: config.emailUser, // Replace with your SMTP username
+        pass: config.emailPassword // Replace with your SMTP password
     }
 });
+
+// // Create a transporter object using the default SMTP transport
+// const transporter = nodemailer.createTransport({
+//     service: 'gmail', // Use your email service provider
+//     auth: {
+//         user: config.emailUser, // Replace with your email address
+//         pass: config.emailPassword // Replace with your email password or app password
+//     }
+// });
 
 // Define the email options
 const mailOptions = (to, subject, html) => ({
