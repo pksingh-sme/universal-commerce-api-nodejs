@@ -16,4 +16,7 @@ router.post('/login', authController.login);
 // Refresh token route
 router.post('/refresh', authController.refreshToken);
 
+// Route for Google Login
+router.post('/google-login', authController.googleLogin);
+
 module.exports = router;

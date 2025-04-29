@@ -18,6 +18,7 @@ const imageRoutes = require('./app/routes/imageRoutes');
 const uploadRoutes = require('./app/routes/uploadRoutes');
 const addressRoutes = require('./app/routes/addressRoutes');
 const projectRoutes = require('./app/routes/projectRoutes');
+const templateRoutes = require('./app/routes/templateRoutes');
 const cartRoutes = require('./app/routes/cartRoutes');
 const orderRoutes = require('./app/routes/orderRoutes');
 
@@ -25,27 +26,27 @@ const config = require('./config/config');
 
 const app = express();
 
+
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
+  const allowedOrigins = ['http://localhost:2100', 'https://abc.com'];
+  const origin = req.headers.origin;
 
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*'); //LINE 5
-  
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  
-    // Request headers you wish to allow
-    //res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    
-  
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-  
-    // Pass to next layer of middleware
-    next();
-  });
+  if (allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+      res.sendStatus(204); // No content
+  } else {
+      next();
+  }
+});
 
   // Middleware to setup session
   // app.use(session({
@@ -68,6 +69,7 @@ app.use('/upload', uploadRoutes); // Routes for uploading files over S3
 app.use('/content', contentRoutes); // Routes for accessing contents in different languages
 app.use('/address', addressRoutes); // Routes for managing user's billing and shipping addresses
 app.use('/projects', projectRoutes); // Routes for managing projects
+app.use('/templates', templateRoutes); // Routes for managing projects
 app.use('/cart', cartRoutes); // Routes for managing user's cart
 app.use('/orders', orderRoutes); // Routes for managing orders
 

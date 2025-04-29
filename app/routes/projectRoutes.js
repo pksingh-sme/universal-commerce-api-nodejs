@@ -22,7 +22,8 @@ router.get('/user/:userId', authService.authenticate, projectController.getProje
 router.get('/:projectId', authService.authenticate, projectController.getProjectById);
 
 // Route to get project by project ID
-router.get('/json/:projectId', authService.authenticate, uploadController.readJSON);
+//router.get('/json/:projectId', authService.authenticate, uploadController.readJSON);
+router.get('/json/:projectId', uploadController.readJSON);
 
 // Route to update project status
 router.put('/:projectId/status', authService.authenticate, projectController.updateProjectStatus);

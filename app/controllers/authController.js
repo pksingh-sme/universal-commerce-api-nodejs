@@ -2,10 +2,9 @@
  * Controller Name: AuthController
  * Filename: authController.js
  * Author: Pramod K Singh
- * Date: Fabruary 2024
- * Description: Controller for authentication, handling logic for user login, registration, and authentication token management.
- * Version: 1.0
- * Copyright: ©2024 Pramod K Singh. All rights reserved.
+ * Date: April 2025
+ * Description: Controller for authentication, including email/password and Google login.
+ * Version: 1.2
  */
 
 const bcrypt = require('bcrypt');
@@ -13,73 +12,139 @@ const jwt = require('jsonwebtoken');
 const config = require('../../config/config');
 const authService = require('../services/authService');
 const dbService = require('../services/dbService');
-//const session = require('express-session');
+const { OAuth2Client } = require('google-auth-library');
 
+const client = new OAuth2Client(config.googleClientId);
 
+// ---------- Email/Password Login ----------
 async function login(req, res) {
     const { email, password } = req.body;
 
     try {
-        // Check if the user exists in the database
-        const user = await dbService.query('SELECT * FROM Users WHERE email = ?', [email]);
-        if (!user.length) {
+        const userResults = await dbService.query('SELECT * FROM Users WHERE email = ?', [email]);
+
+        if (!userResults.length) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Validate password
-        const isValidPassword = await bcrypt.compare(password, user[0].password_hash);
+        const user = userResults[0];
+
+        const isValidPassword = await bcrypt.compare(password, user.password_hash);
         if (!isValidPassword) {
             return res.status(401).json({ message: 'Invalid password' });
         }
 
-        // Generate JWT token
-        const token = authService.generateToken(user[0]);
+        const token = authService.generateToken(user);
+        const refreshToken = authService.generateRefreshToken(user);
 
-        // Generate refresh token
-        const refreshToken = authService.generateRefreshToken(user[0]);
-
-        // Save refresh token in the database
         await dbService.query('UPDATE Users SET token = ? WHERE email = ?', [refreshToken, email]);
 
-        // Set session data for user id
-        //req.session.userId = user[0].user_id;
+        res.status(200).json({
+            token,
+            refreshToken,
+            user: buildUserResponse(user)
+        });
 
-        // Send token and user info in response
-        res.status(200).json({ token, refreshToken, user: {
-            userId: user[0].user_id,
-            email: user[0].email,
-            firstName: user[0].first_name,
-            lastName: user[0].last_name,
-            phone: user[0].phone,
-            photo: user[0].photo,
-            type: user[0].type
-        }});
     } catch (error) {
-        console.error('Error logging in:', error);
+        console.error('Login error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
 
+// ---------- Google Login ----------
+async function googleLogin(req, res) {
+    const { idToken } = req.body;
+
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken,
+            audience: config.googleClientId,
+        });
+
+        const payload = ticket.getPayload();
+        const { email, email_verified, sub, given_name, family_name, picture } = payload;
+
+        if (!email_verified) {
+            return res.status(400).json({ message: 'Email not verified by Google.' });
+        }
+
+        let userResults = await dbService.query('SELECT * FROM Users WHERE email = ?', [email]);
+
+        if (!userResults.length) {
+            await dbService.query(`
+                INSERT INTO Users (email, first_name, last_name, photo, social_id, email_verified, provider, type, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+            `, [email, given_name, family_name, picture, sub, true, 'google', 'Email']);
+            
+            userResults = await dbService.query('SELECT * FROM Users WHERE email = ?', [email]);
+        }
+
+        const user = userResults[0];
+
+        if (!user.user_id) {
+            return res.status(500).json({ message: 'User ID missing in database' });
+        }
+
+        const token = authService.generateToken(user);
+        const refreshToken = authService.generateRefreshToken(user);
+
+        await dbService.query('UPDATE Users SET token = ? WHERE user_id = ?', [refreshToken, user.user_id]);
+
+        res.status(200).json({
+            token,
+            refreshToken,
+            user: buildUserResponse(user)
+        });
+
+    } catch (error) {
+        console.error('Google login error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+// ---------- Refresh Token ----------
 async function refreshToken(req, res) {
     const { refreshToken } = req.body;
 
     try {
         const decoded = jwt.verify(refreshToken, config.refreshTokenSecret);
 
-        const user = await dbService.query('SELECT * FROM Users WHERE user_id = ?', [decoded.user_id]);
-        if (!user.length || user[0].token !== refreshToken) {
+        if (!decoded.user_id) {
+            return res.status(403).json({ message: 'Invalid token payload' });
+        }
+
+        const userResults = await dbService.query('SELECT * FROM Users WHERE user_id = ?', [decoded.user_id]);
+
+        if (!userResults.length || userResults[0].token !== refreshToken) {
             return res.status(403).json({ message: 'Invalid refresh token' });
         }
 
-        const token = authService.generateToken(user[0]);
-        res.status(200).json({ token });
+        const newToken = authService.generateToken(userResults[0]);
+
+        res.status(200).json({ token: newToken });
+
     } catch (error) {
-        console.error('Error refreshing token:', error);
+        console.error('Refresh token error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }
 
+// ---------- Helper to build response ----------
+function buildUserResponse(user) {
+    return {
+        userId: user.user_id,
+        email: user.email,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        phone: user.phone,
+        photo: user.photo,
+        type: user.type,
+        provider: user.provider
+    };
+}
+
 module.exports = {
     login,
-    refreshToken
+    refreshToken,
+    googleLogin
 };

@@ -194,7 +194,7 @@ async function uploadJSON(req, res) {
 
 
 /**
- * Uploads template image file to an AWS S3 bucket and stores its metadata in a database.
+ * Create/Uploads template image file to an AWS S3 bucket and stores its metadata in a database.
  * @param {Object} req - The HTTP request object.
  * @param {Object} res - The HTTP response object.
  * @returns {Promise<void>} A Promise representing the asynchronous operation.
@@ -202,7 +202,7 @@ async function uploadJSON(req, res) {
 async function createTemplate(req, res) {
   try {
 
-      const { userId, content, type, productCode, groupCode, themeCode, tags, byteArray } = req.body;
+      const { templateId, userId, content, type, productCode, groupCode, themeCode, tags, byteArray } = req.body;
       
       //Check if request body and byteArray property exist
       if (!req.body || !byteArray) {
@@ -234,21 +234,28 @@ async function createTemplate(req, res) {
 
       // Wait for both uploads to complete
       await Promise.all(uploadPromises);
-
-      // Insert image metadata into the database
-      const query = 'INSERT INTO Templates (user_id, content, file_type, product_code, group_code, theme_code, url, property) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-      const values = [userId, content, type, productCode, groupCode, themeCode, imageUrl, tags];
+      let query = "";
+      let values = "";
+      if (templateId && templateId > 0){
+      // Update template data into the database
+        query = 'UPDATE Templates SET user_id = ?, content = ?, file_type = ?, product_code = ?, group_code = ?, theme_code = ?, url = ?, property = ? WHERE id = ?';
+        values = [userId, content, type, productCode, groupCode, themeCode, imageUrl, tags, templateId];
+      }else{
+      // Insert template data into the database
+        query = 'INSERT INTO Templates (user_id, content, file_type, product_code, group_code, theme_code, url, property) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+        values = [userId, content, type, productCode, groupCode, themeCode, imageUrl, tags];
+      }
 
       try {
           const result = await dbService.query(query, values);
-
-          console.log('Image metadata inserted into database');
-          res.status(200).json({ imageUrl: imageUrl });
+          
+          const id = templateId ? templateId : result.insertId;
+          console.log('Template content inserted into database');
+          res.status(200).json({ templateId: id, imageUrl: imageUrl });
       } catch (err) {
-          console.error('Error inserting image metadata into database:', err);
-          res.status(500).json({ message: 'Error inserting image metadata into database' });
+          console.error('Error inserting template content into database:', err);
+          res.status(500).json({ message: 'Error inserting template content into database' });
       }
-
 
   } catch (error) {
       console.error("Error uploading file to S3:", error);
